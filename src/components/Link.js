@@ -41,9 +41,6 @@ const Link = ({ link, index, updateStoreAfterVote }) => {
             onError={error => notify.show(error.message)}
           >
             {(voteMutation, { loading }) => {
-              //   if (error && error.message) {
-              //     notify.show(error.message);
-              //   }
               setIsVoting(loading);
               return (
                 <div className="pointer ml1 gray f11" onClick={voteMutation}>
