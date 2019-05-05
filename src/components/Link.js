@@ -52,7 +52,7 @@ const Link = ({ link, index, updateStoreAfterVote }) => {
       <div className="ml1">
         <div>
           {link.description} (
-          <a className="f6" href={link.url} target="_blank">
+          <a className="f6 no-underline black" href={link.url} target="_blank">
             {link.url}
           </a>
           )
