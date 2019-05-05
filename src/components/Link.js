@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
+import { notify } from "react-notify-toast";
 import { AUTH_TOKEN } from "../constants";
 import { timeDifferenceForDate } from "../utils";
 
@@ -37,8 +38,12 @@ const Link = ({ link, index, updateStoreAfterVote }) => {
             update={(store, { data: { vote } }) =>
               updateStoreAfterVote(store, vote, link.id)
             }
+            onError={error => notify.show(error.message)}
           >
-            {(voteMutation, { loading, error }) => {
+            {(voteMutation, { loading }) => {
+              //   if (error && error.message) {
+              //     notify.show(error.message);
+              //   }
               setIsVoting(loading);
               return (
                 <div className="pointer ml1 gray f11" onClick={voteMutation}>
