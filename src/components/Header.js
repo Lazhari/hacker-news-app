@@ -1,53 +1,72 @@
 import React from "react";
+import { createStyles, withStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Typography from "@material-ui/core/Typography";
+import ToolBar from "@material-ui/core/Toolbar";
+import Button from "@material-ui/core/Button";
 import { Link, withRouter } from "react-router-dom";
 import { AUTH_TOKEN } from "../constants";
 
-const Header = props => {
+const Header = ({ classes, history }) => {
   const authToken = localStorage.getItem(AUTH_TOKEN);
   return (
-    <div className="flex pa1 justify-between nowrap orange">
-      <div className="flex flex-fixed black">
-        <div className="fw7 mr1">Hacker News</div>
-        <Link to="/" className="ml1 no-underline black">
-          new
-        </Link>
-        <div className="ml1">|</div>
-        <Link to="/top" className="ml1 no-underline black">
-          top
-        </Link>
-        <div className="ml1">|</div>
-        <Link to="/search" className="ml1 no-underline black">
-          search
-        </Link>
-
-        {authToken && (
-          <div className="flex">
-            <div className="ml1">|</div>
-            <Link to="/create" className="ml1 no-underline black">
-              submit
-            </Link>
+    <div>
+      <AppBar position="static">
+        <ToolBar>
+          <Typography variant="h6" color="inherit">
+            Hacker News
+          </Typography>
+          <nav className={classes.nav}>
+            <Link to="/">new</Link>
+            <Link to="/top">top</Link>
+            <Link to="/search">search</Link>
+            {authToken && <Link to="/create">submit</Link>}
+          </nav>
+          <div>
+            {authToken ? (
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  localStorage.removeItem(AUTH_TOKEN);
+                  history.push("/");
+                }}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Link to="/login" className={classes.link}>
+                Login
+              </Link>
+            )}
           </div>
-        )}
-      </div>
-      <div className="flex flex-fixed">
-        {authToken ? (
-          <div
-            className="ml1 pointer black"
-            onClick={() => {
-              localStorage.removeItem(AUTH_TOKEN);
-              props.history.push("/");
-            }}
-          >
-            Logout
-          </div>
-        ) : (
-          <Link to="/login" className="ml1 no-underline black">
-            Login
-          </Link>
-        )}
-      </div>
+        </ToolBar>
+      </AppBar>
     </div>
   );
 };
 
-export default withRouter(Header);
+const styles = ({ spacing }) =>
+  createStyles({
+    root: {},
+    toolbar: {
+      display: "flex"
+    },
+    nav: {
+      flexGrow: 1,
+      marginLeft: spacing.unit * 2,
+      "& a": {
+        marginRight: spacing.unit * 2,
+        textDecoration: "none",
+        color: "white",
+        fontWeight: 700
+      }
+    },
+    link: {
+      marginRight: spacing.unit * 2,
+      textDecoration: "none",
+      color: "white",
+      fontWeight: 700
+    }
+  });
+
+export default withStyles(styles)(withRouter(Header));

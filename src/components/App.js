@@ -9,7 +9,7 @@ import Notifications from "react-notify-toast";
 
 function App() {
   return (
-    <div className="center w85">
+    <div>
       <Header />
       <div className="ph3 pv1 background-gray">
         <Notifications />

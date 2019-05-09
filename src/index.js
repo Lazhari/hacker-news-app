@@ -11,7 +11,7 @@ import { WebSocketLink } from "apollo-link-ws";
 import { getMainDefinition } from "apollo-utilities";
 
 import "styles/index.css";
-import App from "components/App";
+import Root from "components/Root";
 import * as serviceWorker from "./serviceWorker";
 import { AUTH_TOKEN } from "./constants";
 
@@ -56,7 +56,7 @@ const client = new ApolloClient({
 ReactDOM.render(
   <BrowserRouter>
     <ApolloProvider client={client}>
-      <App />
+      <Root />
     </ApolloProvider>
   </BrowserRouter>,
   document.getElementById("root")
