@@ -1,5 +1,6 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { createStyles, withStyles } from "@material-ui/core/styles";
 import Header from "./Header";
 import Search from "./Search";
 import Login from "./Login";
@@ -7,11 +8,11 @@ import LinkList from "./LinkList";
 import CreateLink from "./CreateLink";
 import Notifications from "react-notify-toast";
 
-function App() {
+function App({ classes }) {
   return (
     <div>
       <Header />
-      <div className="ph3 pv1 background-gray">
+      <main className={classes.root}>
         <Notifications />
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/new/1" />} />
@@ -21,9 +22,16 @@ function App() {
           <Route exact path="/top" component={LinkList} />
           <Route exact path="/new/:page" component={LinkList} />
         </Switch>
-      </div>
+      </main>
     </div>
   );
 }
 
-export default App;
+const styles = ({ spacing }) =>
+  createStyles({
+    root: {
+      paddingTop: spacing.unit * 3
+    }
+  });
+
+export default withStyles(styles)(App);
