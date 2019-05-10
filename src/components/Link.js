@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 import { Mutation } from "react-apollo";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
+import Typography from "@material-ui/core/Typography";
+import MuiLink from "@material-ui/core/Link";
+import IconButton from "@material-ui/core/IconButton";
+import KeyboardArrowUp from "@material-ui/icons/KeyboardArrowUp";
+import TimerIcon from "@material-ui/icons/Timer";
+import UserIcon from "@material-ui/icons/Mood";
 import gql from "graphql-tag";
 import { notify } from "react-notify-toast";
 import { AUTH_TOKEN } from "../constants";
@@ -28,9 +36,11 @@ const Link = ({ link, index, updateStoreAfterVote }) => {
   const [isVoting, setIsVoting] = useState(false);
   const authToken = localStorage.getItem(AUTH_TOKEN);
   return (
-    <div className="flex mt2 items-start">
-      <div className="flex items-center">
-        <span className="gray">{index + 1}</span>
+    <TableRow>
+      <TableCell>
+        <Typography>{index + 1}</Typography>
+      </TableCell>
+      <TableCell>
         {authToken && (
           <Mutation
             mutation={VOTE_MUTATION}
@@ -43,29 +53,40 @@ const Link = ({ link, index, updateStoreAfterVote }) => {
             {(voteMutation, { loading }) => {
               setIsVoting(loading);
               return (
-                <div className="pointer ml1 gray f11" onClick={voteMutation}>
-                  ▲
-                </div>
+                <IconButton onClick={voteMutation}>
+                  <KeyboardArrowUp color="primary" />
+                </IconButton>
               );
             }}
           </Mutation>
         )}
-      </div>
-      <div className="ml1">
-        <div>
-          {link.description} (
-          <a className="f6 no-underline black" href={link.url} target="_blank">
-            {link.url}
-          </a>
-          )
-        </div>
-        <div className="f6 lh-copy gray">
+      </TableCell>
+      <TableCell align="center">
+        <Typography>
           {!isVoting ? `${link.votes.length} votes ` : "Updating... "}
-          by {link.postedBy ? link.postedBy.name : "Unknown"}{" "}
+        </Typography>
+      </TableCell>
+      <TableCell align="left">
+        <Typography>{link.description}</Typography>
+      </TableCell>
+      <TableCell align="left">
+        <MuiLink href={link.url} target="_blank">
+          {link.url}
+        </MuiLink>
+      </TableCell>
+      <TableCell align="center">
+        <Typography>
+          <TimerIcon />
           {timeDifferenceForDate(link.createdAt)}
-        </div>
-      </div>
-    </div>
+        </Typography>
+      </TableCell>
+      <TableCell align="center">
+        <Typography>
+          <UserIcon />
+          {link.postedBy ? link.postedBy.name : "Unknown"}
+        </Typography>
+      </TableCell>
+    </TableRow>
   );
 };
 

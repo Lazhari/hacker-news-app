@@ -1,8 +1,11 @@
 import React from "react";
-import Link from "./Link";
+import { createStyles, withStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import Button from "@material-ui/core/Button";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
+import Link from "./Link";
 import { LINKS_PER_PAGE } from "../constants";
 
 export const FEED_QUERY = gql`
@@ -151,20 +154,20 @@ const LinkList = props => {
     }
   };
   return (
-    <div>
-      <Query query={FEED_QUERY} variables={_getQueryVariables()}>
-        {({ loading, error, data, subscribeToMore }) => {
-          if (loading) return <div>Fetching..</div>;
-          if (error) return <div>☢{error.message}☢</div>;
-          _subscribeToNewLinks(subscribeToMore);
-          _subscribeToNewVotes(subscribeToMore);
-          const linksToRender = _getLinksToRender(data);
-          const isNewPage = props.location.pathname.includes("new");
-          const pageIndex = props.match.params.page
-            ? (props.match.params.page - 1) * LINKS_PER_PAGE
-            : 0;
-          return (
-            <>
+    <Query query={FEED_QUERY} variables={_getQueryVariables()}>
+      {({ loading, error, data, subscribeToMore }) => {
+        if (loading) return <div>Fetching..</div>;
+        if (error) return <div>☢{error.message}☢</div>;
+        _subscribeToNewLinks(subscribeToMore);
+        _subscribeToNewVotes(subscribeToMore);
+        const linksToRender = _getLinksToRender(data);
+        const isNewPage = props.location.pathname.includes("new");
+        const pageIndex = props.match.params.page
+          ? (props.match.params.page - 1) * LINKS_PER_PAGE
+          : 0;
+        return (
+          <>
+            <Table>
               {linksToRender.map((link, index) => (
                 <Link
                   key={link.id}
@@ -173,22 +176,28 @@ const LinkList = props => {
                   updateStoreAfterVote={_updateCacheAfterVote}
                 />
               ))}
-              {isNewPage && (
-                <div className="flex ml4 mv3 gray">
-                  <div className="pointer mr2" onClick={_previousPage}>
-                    Previous
-                  </div>
-                  <div className="pointer" onClick={() => _nextPage(data)}>
-                    Next
-                  </div>
-                </div>
-              )}
-            </>
-          );
-        }}
-      </Query>
-    </div>
+            </Table>
+            {isNewPage && (
+              <div className={props.classes.footer}>
+                <Button onClick={_previousPage}>Previous</Button>
+                <Button onClick={() => _nextPage(data)}>Next</Button>
+              </div>
+            )}
+          </>
+        );
+      }}
+    </Query>
   );
 };
 
-export default LinkList;
+const styles = ({ spacing }) =>
+  createStyles({
+    root: {},
+    footer: {
+      display: "flex",
+      justifyContent: "flex-end",
+      padding: spacing.unit * 2
+    }
+  });
+
+export default withStyles(styles)(LinkList);

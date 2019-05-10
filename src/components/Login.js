@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { AUTH_TOKEN } from "../constants";
+import { createStyles, withStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
+
+import { AUTH_TOKEN } from "../constants";
 
 const SIGNUP_MUTATION = gql`
   mutation SignupMutation($email: String!, $password: String!, $name: String!) {
@@ -18,7 +24,7 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-const Login = props => {
+const Login = ({ history, classes }) => {
   const [loginState, setLoginState] = useState({
     login: true,
     email: "",
@@ -31,67 +37,103 @@ const Login = props => {
   const _confirm = async data => {
     const { token } = login ? data.login : data.signup;
     _saveUserData(token);
-    props.history.push("/");
+    history.push("/");
   };
   const _saveUserData = token => {
     localStorage.setItem(AUTH_TOKEN, token);
   };
 
   return (
-    <div>
-      <h4 className="mv3">{login ? "Login" : "Sign Up"}</h4>
-      <div className="flex flex-column">
-        {!login && (
-          <input
-            className="pa2 input-reset ba bg-transparent w-100 mb1"
-            value={name}
-            onChange={e =>
-              setLoginState({ ...loginState, name: e.target.value })
-            }
-            type="text"
-            placeholder="Your name"
-          />
-        )}
-        <input
-          className="pa2 input-reset ba bg-transparent w-100 mb1"
-          value={email}
-          onChange={e =>
-            setLoginState({ ...loginState, email: e.target.value })
-          }
-          type="text"
-          placeholder="Your E-mail"
-        />
-        <input
-          className="pa2 input-reset ba bg-transparent w-100 mb1"
-          value={password}
-          onChange={e =>
-            setLoginState({ ...loginState, password: e.target.value })
-          }
-          type="password"
-          placeholder="Choose a safe password"
-        />
-      </div>
-      <div className="flex mt3">
-        <Mutation
-          mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
-          variables={{ email, password, name }}
-          onCompleted={data => _confirm(data)}
-        >
-          {mutation => (
-            <div className="pointer mr2 button" onClick={mutation}>
-              {login ? "Login" : "Create Account"}
-            </div>
+    <div className={classes.root}>
+      <Typography variant="h6">{login ? "Login" : "Sign Up"}</Typography>
+      <Typography />
+      <form className={classes.formContainer} noValidate autoComplete="off">
+        <Grid container spacing={8}>
+          {!login && (
+            <Grid item xs={12}>
+              <TextField
+                label="Your name"
+                variant="outlined"
+                fullWidth
+                value={name}
+                onChange={e =>
+                  setLoginState({ ...loginState, name: e.target.value })
+                }
+                type="text"
+                placeholder="Your name"
+              />
+            </Grid>
           )}
-        </Mutation>
-        <div
-          className="pointer button"
-          onClick={() => setLoginState({ ...loginState, login: !login })}
-        >
-          {login ? "Need to create an account?" : "Already have an account?"}
-        </div>
-      </div>
+          <Grid item xs={12}>
+            <TextField
+              label="Your E-mail"
+              variant="outlined"
+              fullWidth
+              value={email}
+              onChange={e =>
+                setLoginState({ ...loginState, email: e.target.value })
+              }
+              type="text"
+              placeholder="Your E-mail"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Choose a safe password"
+              variant="outlined"
+              fullWidth
+              value={password}
+              onChange={e =>
+                setLoginState({ ...loginState, password: e.target.value })
+              }
+              type="password"
+              placeholder="Choose a safe password"
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.actionsGrid}>
+            <Mutation
+              mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
+              variables={{ email, password, name }}
+              onCompleted={data => _confirm(data)}
+            >
+              {mutation => (
+                <Button onClick={mutation} variant="outlined">
+                  {login ? "Login" : "Create Account"}
+                </Button>
+              )}
+            </Mutation>
+            <Button
+              onClick={() => setLoginState({ ...loginState, login: !login })}
+            >
+              {login
+                ? "Need to create an account?"
+                : "Already have an account?"}
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
     </div>
   );
 };
 
-export default Login;
+const styles = ({ spacing }) =>
+  createStyles({
+    root: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    formContainer: {
+      width: "30%"
+    },
+    actionsGrid: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    submitButton: {
+      width: spacing.unit * 20
+    }
+  });
+
+export default withStyles(styles)(Login);
