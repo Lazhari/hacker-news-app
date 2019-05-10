@@ -2,6 +2,7 @@ import React from "react";
 import { createStyles, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -156,8 +157,9 @@ const LinkList = props => {
   return (
     <Query query={FEED_QUERY} variables={_getQueryVariables()}>
       {({ loading, error, data, subscribeToMore }) => {
-        if (loading) return <div>Fetching..</div>;
-        if (error) return <div>☢{error.message}☢</div>;
+        if (loading) return <Typography align="center">Fetching..</Typography>;
+        if (error)
+          return <Typography align="center">☢{error.message}☢</Typography>;
         _subscribeToNewLinks(subscribeToMore);
         _subscribeToNewVotes(subscribeToMore);
         const linksToRender = _getLinksToRender(data);
